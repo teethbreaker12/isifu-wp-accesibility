@@ -1,0 +1,97 @@
+/* Accessibility Styles Applied to Body based on active button classes */
+
+/* 
+ * UI BUG FIXES: 
+ * 1. Using standard 'filter' on the body explicitly breaks 'position: fixed' rules,
+ *    causing the accessibility button to detach and fall to the bottom of the document.
+ * 2. Background inversion fails on transparent backgrounds because 'html' defaults to white,
+ *    but 'body' limits the filter boundary.
+ * 
+ * SOLUTION: Define a hidden fullscreen overlay behind the widget but in front of everything else.
+ * Utilize 'backdrop-filter' which preserves positioning contexts flawlessly and covers all browser
+ * painting layers beneath it!
+ */
+
+#isifu-accessibility-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Let clicks pass through to the website */
+    z-index: 999998; /* Just below the widget which is 999999 */
+    display: none;
+}
+
+/* Enable overlay visibility when any visual filter is active */
+body.isifu-invert-colors #isifu-accessibility-overlay,
+body.isifu-monochrome #isifu-accessibility-overlay,
+body.isifu-dark-contrast #isifu-accessibility-overlay,
+body.isifu-light-contrast #isifu-accessibility-overlay,
+body.isifu-low-saturation #isifu-accessibility-overlay,
+body.isifu-high-saturation #isifu-accessibility-overlay {
+    display: block;
+}
+
+/* Invert Colors */
+body.isifu-invert-colors #isifu-accessibility-overlay {
+    backdrop-filter: invert(100%) hue-rotate(180deg);
+    -webkit-backdrop-filter: invert(100%) hue-rotate(180deg);
+}
+
+/* Monochrome */
+body.isifu-monochrome #isifu-accessibility-overlay {
+    backdrop-filter: grayscale(100%);
+    -webkit-backdrop-filter: grayscale(100%);
+}
+
+/* Dark Contrast */
+body.isifu-dark-contrast {
+    /* To guarantee high contrast works correctly even if the original site lacks a strict background */
+    background-color: #fff !important; 
+}
+body.isifu-dark-contrast #isifu-accessibility-overlay {
+    backdrop-filter: invert(1) hue-rotate(180deg) contrast(150%) brightness(80%);
+    -webkit-backdrop-filter: invert(1) hue-rotate(180deg) contrast(150%) brightness(80%);
+}
+
+/* Light Contrast */
+body.isifu-light-contrast {
+    background-color: #fff !important; 
+}
+body.isifu-light-contrast #isifu-accessibility-overlay {
+    backdrop-filter: contrast(120%) brightness(110%);
+    -webkit-backdrop-filter: contrast(120%) brightness(110%);
+}
+
+/* Low Saturation */
+body.isifu-low-saturation #isifu-accessibility-overlay {
+    backdrop-filter: saturate(30%);
+    -webkit-backdrop-filter: saturate(30%);
+}
+
+/* High Saturation */
+body.isifu-high-saturation #isifu-accessibility-overlay {
+    backdrop-filter: saturate(200%);
+    -webkit-backdrop-filter: saturate(200%);
+}
+
+/* Highlight Links */
+body.isifu-highlight-links a {
+    text-decoration: underline !important;
+    text-decoration-thickness: 3px !important;
+    text-decoration-color: var(--isifu-accent, #0284c7) !important;
+    color: var(--isifu-accent, #0284c7) !important;
+    background-color: #fffae6 !important; /* light yellow to stand out */
+}
+
+/* Highlight Headings */
+body.isifu-highlight-headings h1,
+body.isifu-highlight-headings h2,
+body.isifu-highlight-headings h3,
+body.isifu-highlight-headings h4,
+body.isifu-highlight-headings h5,
+body.isifu-highlight-headings h6 {
+    outline: 2px dashed var(--isifu-accent, #0284c7) !important;
+    outline-offset: 4px !important;
+}

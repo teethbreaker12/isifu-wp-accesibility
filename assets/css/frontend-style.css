@@ -1,0 +1,367 @@
+#isifu-accessibility-trigger {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--isifu-accent, #0284c7);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    transition: transform 0.2s;
+}
+#isifu-accessibility-trigger:hover {
+    transform: scale(1.05);
+}
+
+/* Base Light Theme */
+#isifu-accessibility-app.isifu-theme-light {
+    --isifu-panel-bg: #ffffff;
+    --isifu-panel-text: #1f2937;
+    --isifu-btn-bg: #f9fafb;
+    --isifu-btn-hover: #f3f4f6;
+    --isifu-btn-border: #e5e7eb;
+    --isifu-active-border: var(--isifu-accent, #0284c7);
+    --isifu-slider-row-bg: #f9fafb;
+    --isifu-border: #e5e7eb;
+    --isifu-header-action-hover: rgba(0,0,0,0.05);
+    --isifu-scrollbar-thumb: #cbd5e1;
+}
+
+/* Base Dark Theme */
+#isifu-accessibility-app.isifu-theme-dark {
+    --isifu-panel-bg: #262626;
+    --isifu-panel-text: #ffffff;
+    --isifu-btn-bg: #333333;
+    --isifu-btn-hover: #3f3f3f;
+    --isifu-btn-border: transparent;
+    --isifu-active-border: var(--isifu-accent, #0284c7);
+    --isifu-slider-row-bg: #333333;
+    --isifu-border: #4d4d4d;
+    --isifu-header-action-hover: rgba(255,255,255,0.1);
+    --isifu-scrollbar-thumb: #555555;
+}
+
+#isifu-accessibility-app {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#isifu-accessibility-panel {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 420px;
+    max-height: calc(100vh - 120px);
+    background-color: var(--isifu-panel-bg);
+    color: var(--isifu-panel-text);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+#isifu-accessibility-app.isifu-theme-light #isifu-accessibility-panel {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+#isifu-accessibility-panel[aria-hidden="false"] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+#isifu-accessibility-panel:not([hidden]) {
+    display: flex;
+}
+
+.isifu-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 16px;
+}
+.isifu-panel-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--isifu-panel-text);
+}
+.isifu-header-actions {
+    display: flex;
+    gap: 12px;
+}
+.isifu-header-actions button {
+    background: transparent;
+    border: none;
+    color: var(--isifu-panel-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+#isifu-close-panel {
+    background-color: var(--isifu-accent, #0284c7) !important;
+    color: #ffffff !important;
+    border-radius: 50% !important;
+    width: 36px;
+    height: 36px;
+    transition: filter 0.2s;
+}
+#isifu-close-panel:hover {
+    filter: brightness(1.1);
+}
+#isifu-reset-btn {
+    width: 36px;
+    height: 36px;
+    transition: transform 0.3s;
+}
+#isifu-reset-btn:hover {
+    transform: rotate(-45deg);
+    background-color: var(--isifu-header-action-hover) !important;
+}
+
+.isifu-panel-content {
+    padding: 0 24px 24px 24px;
+    overflow-y: auto;
+}
+/* Custom Scrollbar for panel */
+.isifu-panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+.isifu-panel-content::-webkit-scrollbar-thumb {
+    background-color: var(--isifu-scrollbar-thumb);
+    border-radius: 3px;
+}
+
+.isifu-button-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.isifu-grid-btn {
+    background-color: var(--isifu-btn-bg);
+    border: 1px solid var(--isifu-btn-border);
+    border-radius: 8px;
+    padding: 14px 12px;
+    color: var(--isifu-panel-text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.isifu-grid-btn:hover {
+    background-color: var(--isifu-btn-hover);
+}
+
+.isifu-grid-btn.is-active {
+    border-color: var(--isifu-active-border);
+}
+
+.isifu-btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.isifu-btn-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.isifu-slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.isifu-slider-row {
+    background-color: var(--isifu-slider-row-bg);
+    border: 1px solid var(--isifu-btn-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.isifu-slider-label {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.isifu-slider-custom-range {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+.isifu-slider-custom-range input[type="range"] {
+    width: 100%;
+    accent-color: var(--isifu-accent, #0284c7);
+}
+
+.isifu-slider-value {
+    width: 50px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.9rem;
+    color: var(--isifu-panel-text);
+    opacity: 0.8;
+}
+
+.isifu-slider-actions {
+    display: flex;
+    border-left: 1px solid var(--isifu-border);
+    padding-left: 6px;
+    gap: 4px;
+}
+
+.isifu-slider-btn {
+    background: transparent;
+    color: var(--isifu-panel-text);
+    border: none;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.isifu-slider-btn:hover {
+    background-color: var(--isifu-header-action-hover);
+    color: var(--isifu-accent, #0284c7);
+}
+
+.isifu-footer-links {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--isifu-border);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.isifu-statement {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--isifu-panel-text);
+    opacity: 0.9;
+}
+
+.isifu-contact {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--isifu-panel-text);
+}
+
+.isifu-btn-primary {
+    display: inline-block;
+    text-align: center;
+    padding: 10px 16px;
+    background-color: var(--isifu-accent, #0284c7);
+    color: #ffffff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: filter 0.2s;
+}
+.isifu-btn-primary:hover {
+    filter: brightness(1.1);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.isifu-footer {
+    margin-top: 20px;
+    padding: 12px 24px 0 24px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--isifu-panel-text);
+    opacity: 0.6;
+}
+
+.isifu-footer a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.isifu-footer a:hover {
+    color: var(--isifu-accent, #0284c7);
+    text-decoration: none;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 480px) {
+    #isifu-accessibility-trigger {
+        right: 16px;
+        bottom: 16px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    #isifu-accessibility-panel {
+        width: calc(100vw - 32px);
+        right: 16px;
+        bottom: 80px;
+        max-height: calc(100vh - 100px);
+        border-radius: 16px;
+    }
+    
+    .isifu-panel-header {
+        padding: 16px 16px 12px;
+    }
+    .isifu-panel-header h2 {
+        font-size: 1.15rem;
+    }
+
+    .isifu-panel-content {
+        padding: 0 16px 16px 16px;
+    }
+
+    .isifu-button-grid {
+        gap: 8px;
+    }
+
+    .isifu-grid-btn {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 12px 8px;
+        font-size: 0.75rem;
+        gap: 8px;
+    }
+
+    .isifu-slider-row {
+        flex-wrap: wrap; /* Allow the label to break to its own line */
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .isifu-slider-label {
+        flex: 1 1 100%;
+        margin-bottom: 2px;
+    }
+
+    .isifu-slider-actions {
+        border-left: none;
+        padding-left: 0;
+    }
+
+    .isifu-slider-value {
+        width: 45px;
+    }
+}
