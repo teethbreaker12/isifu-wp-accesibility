@@ -16,6 +16,8 @@ define('ISIFU_ACCESSIBILITY_VERSION', '1.0.1');
 define('ISIFU_ACCESSIBILITY_PATH', plugin_dir_path(__FILE__));
 define('ISIFU_ACCESSIBILITY_URL', plugin_dir_url(__FILE__));
 
+require_once ISIFU_ACCESSIBILITY_PATH . 'includes/class-isifu-accessibility-i18n.php';
+
 if (is_admin()) {
     require_once ISIFU_ACCESSIBILITY_PATH . 'includes/class-isifu-accessibility-settings.php';
 }
@@ -51,9 +53,11 @@ class Isifu_Accessibility
     {
         $theme = get_option('isifu_acc_theme', 'dark');
         $accent_color = get_option('isifu_acc_accent_color', '#0284c7');
-        $docs_url = get_option('isifu_acc_docs', '');
-        $statement = get_option('isifu_acc_statement', '');
-        $contact = get_option('isifu_acc_contact', '');
+        $language = Isifu_Accessibility_I18n::get_current_language();
+        $text = Isifu_Accessibility_I18n::get_translation($language);
+        $docs_url = ! empty($text['docs_url']) ? $text['docs_url'] : get_option('isifu_acc_docs', '');
+        $statement = ! empty($text['statement']) ? $text['statement'] : get_option('isifu_acc_statement', '');
+        $contact = ! empty($text['contact']) ? $text['contact'] : get_option('isifu_acc_contact', '');
 
 ?>
         <style>
@@ -62,8 +66,8 @@ class Isifu_Accessibility
             }
         </style>
         <div id="isifu-accessibility-overlay"></div>
-        <div id="isifu-accessibility-app" class="isifu-theme-<?php echo esc_attr($theme); ?>">
-            <button id="isifu-accessibility-trigger" aria-label="Open Accessibility Menu" aria-expanded="false">
+        <div id="isifu-accessibility-app" class="isifu-theme-<?php echo esc_attr($theme); ?>" data-isifu-language="<?php echo esc_attr($language); ?>">
+            <button id="isifu-accessibility-trigger" aria-label="<?php echo esc_attr($text['trigger_aria']); ?>" aria-expanded="false">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <path d="m4.93 4.93 4.24 4.24"></path>
@@ -74,17 +78,17 @@ class Isifu_Accessibility
                 </svg>
             </button>
 
-            <div id="isifu-accessibility-panel" role="dialog" aria-modal="true" aria-label="Accessibility Options" hidden>
+            <div id="isifu-accessibility-panel" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr($text['panel_aria']); ?>" hidden>
                 <div class="isifu-panel-header">
-                    <h2>Ułatwienia dostępu</h2>
+                    <h2><?php echo esc_html($text['panel_title']); ?></h2>
                     <div class="isifu-header-actions">
-                        <button id="isifu-reset-btn" aria-label="Reset">
+                        <button id="isifu-reset-btn" aria-label="<?php echo esc_attr($text['reset_aria']); ?>">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                                 <path d="M3 3v5h5" />
                             </svg>
                         </button>
-                        <button id="isifu-close-panel" aria-label="Close Accessibility Menu">
+                        <button id="isifu-close-panel" aria-label="<?php echo esc_attr($text['close_aria']); ?>">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -96,23 +100,23 @@ class Isifu_Accessibility
                 <div class="isifu-panel-content">
                     <div class="isifu-button-grid">
                         <?php
-                        $this->render_grid_btn('invert-colors', 'Odwróć kolory', '<circle cx="12" cy="12" r="10"></circle><path d="M12 2v20a10 10 0 0 0 0-20z"></path>');
-                        $this->render_grid_btn('monochrome', 'Monochromatyczny', '<circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>');
-                        $this->render_grid_btn('dark-contrast', 'Ciemny kontrast', '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>');
-                        $this->render_grid_btn('light-contrast', 'Jasny kontrast', '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>');
-                        $this->render_grid_btn('low-saturation', 'Niskie nasycenie', '<circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path>');
-                        $this->render_grid_btn('high-saturation', 'Wysokie nasycenie', '<circle cx="12" cy="12" r="10"></circle><path d="M12 16v-8"></path>');
-                        $this->render_grid_btn('highlight-links', 'Zaznacz linki', '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>');
-                        $this->render_grid_btn('highlight-headings', 'Zaznacz nagłówki', '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M8 7v10"></path><path d="M12 7v10"></path><path d="M8 12h4"></path><path d="M16 8.5v8.5"></path><path d="M14.5 10.5L16 8.5"></path>');
+                        $this->render_grid_btn('invert-colors', $text['invert_colors'], '<circle cx="12" cy="12" r="10"></circle><path d="M12 2v20a10 10 0 0 0 0-20z"></path>');
+                        $this->render_grid_btn('monochrome', $text['monochrome'], '<circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>');
+                        $this->render_grid_btn('dark-contrast', $text['dark_contrast'], '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>');
+                        $this->render_grid_btn('light-contrast', $text['light_contrast'], '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>');
+                        $this->render_grid_btn('low-saturation', $text['low_saturation'], '<circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path>');
+                        $this->render_grid_btn('high-saturation', $text['high_saturation'], '<circle cx="12" cy="12" r="10"></circle><path d="M12 16v-8"></path>');
+                        $this->render_grid_btn('highlight-links', $text['highlight_links'], '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>');
+                        $this->render_grid_btn('highlight-headings', $text['highlight_headings'], '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M8 7v10"></path><path d="M12 7v10"></path><path d="M8 12h4"></path><path d="M16 8.5v8.5"></path><path d="M14.5 10.5L16 8.5"></path>');
                         ?>
                     </div>
 
                     <div class="isifu-slider-container">
                         <?php
-                        $this->render_slider('content-scaling', 'Skalowanie treści', 100, 50, 200, 10, '%');
-                        $this->render_slider('font-size', 'Czcionka', 100, 50, 200, 10, '%');
-                        $this->render_slider('line-height', 'Wysokość linii', 100, 50, 200, 10, '%');
-                        $this->render_slider('letter-spacing', 'Odstęp liter', 100, 0, 500, 10, '%');
+                        $this->render_slider('content-scaling', $text['content_scaling'], 100, 50, 200, 10, '%');
+                        $this->render_slider('font-size', $text['font_size'], 100, 50, 200, 10, '%');
+                        $this->render_slider('line-height', $text['line_height'], 100, 50, 200, 10, '%');
+                        $this->render_slider('letter-spacing', $text['letter_spacing'], 100, 0, 500, 10, '%');
                         ?>
                     </div>
                     <?php if (!empty($docs_url) || !empty($statement) || !empty($contact)) : ?>
@@ -126,12 +130,12 @@ class Isifu_Accessibility
                             <?php endif; ?>
 
                             <?php if (!empty($docs_url)) : ?>
-                                <a href="<?php echo esc_url($docs_url); ?>" class="isifu-docs-link isifu-btn-primary" target="_blank">Deklaracja dostępności</a>
+                                <a href="<?php echo esc_url($docs_url); ?>" class="isifu-docs-link isifu-btn-primary" target="_blank"><?php echo esc_html($text['docs_link_label']); ?></a>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
                     <div class="isifu-footer">
-                        <p>made by: <a href="https://isifu.dev" target="_blank">isifu.dev</a></p>
+                        <p><?php echo esc_html($text['made_by_label']); ?> <a href="https://isifu.dev" target="_blank">isifu.dev</a></p>
                     </div>
                 </div>
             </div>
